@@ -4,7 +4,7 @@ import re
 import zhon.hanzi
 
 
-def read_file(fpath):
+def read_file(fpath):#读取文件，返回字符串
     try:
         if os.path.exists(fpath):
             with open(fpath, 'r', encoding="utf-8") as f:
@@ -22,7 +22,7 @@ def read_file(fpath):
     return file
 
 
-def modify_t(sentence):
+def modify_t(sentence):#在训练语料句子的前后加上<EOS>和<BOS>，返回切分为词的句子列表
     s_modify1 = ""
     for stop in zhon.hanzi.stops:
         s_modify1 = sentence.replace(stop, "<EOS>")
@@ -31,7 +31,7 @@ def modify_t(sentence):
     return re.split(" ", s_modify2)
 
 
-def modify_fb(sentence):
+def modify_fb(sentence):#处理分词语料中的句子，切分为词，返回存储句子的列表
     for stop in zhon.hanzi.stops:
         sentence = sentence.replace(stop, "")
     s_modify = re.split("\|", sentence)
@@ -40,25 +40,25 @@ def modify_fb(sentence):
     return s_modify
 
 
-# 将语料中的每个句子进行分词处理，返回列表
+#处理语料库（训练语料和分词语料），将语料库中的文件和文件内容处理存为字典，返回对应三种字典
 def format_corpus():
     sentence = '[{characters}{radicals}{non_stops}]*{sentence_end}'.format(
         characters=zhon.hanzi.characters, radicals=zhon.hanzi.radicals, non_stops=zhon.hanzi.non_stops + " " + "|",
-        sentence_end=zhon.hanzi._sentence_end)
+        sentence_end=zhon.hanzi._sentence_end)#定义中文句子结构
     trainingCorpusPath = "E://Python/自然语言处理/实验三/训练语料/"
     fmmFilePath = "E://Python/自然语言处理/实验三/语料库_FMM/"
     bmmFilePath = "E://Python/自然语言处理/实验三/语料库_BMM/"
     trainingName = os.listdir(trainingCorpusPath)
     fmmFileName = os.listdir(fmmFilePath)
     bmmFileName = os.listdir(bmmFilePath)
-    trainingFiles = {}
-    fmmFiles = {}
-    bmmFiles = {}
+    trainingFiles = {}#存储训练语料处理后的结果
+    fmmFiles = {}#存储fmm分词处理后的结果
+    bmmFiles = {}#存储bmm分词处理后的结果
     for fName in fmmFileName:
         fmmFilesContent = []
-        fContent = re.findall(sentence, read_file(fmmFilePath + fName))
+        fContent = re.findall(sentence, read_file(fmmFilePath + fName))#将.txt文件中句子提取出来，存为列表
         for f_content in fContent:
-            fmmFilesContent.append(modify_fb(f_content))
+            fmmFilesContent.append(modify_fb(f_content))#处理列表中的句子
         fmmFiles[fName] = fmmFilesContent
     for bName in bmmFileName:
         bmmFilesContent = []
