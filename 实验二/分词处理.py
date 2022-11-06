@@ -116,22 +116,11 @@ def implement_BMM(root, fname, dict, word_num, word_standard_num, word_correct_n
 
 
 # 获取文件中的正确分词数
-# def get_correct_number(list_jieba,list_MM):#list_jieba是jieba分词的结果，list_MM是FMM\BMM分词的结果
-#     n=0#记录正确分词的数量
-#     for x in list_MM:
-#         if x in list_jieba:
-#             n+=1
-#     return n
 
-def to_region(s):
-    """
-    将分词结果转换为区间
-    :param segmentation: 商品 和 服务
-    :return: [(0, 2), (2, 3), (3, 5)]
-    """
+def to_region(lst):
     region = []
     start = 0
-    for word in re.compile("\\s+").split(s.strip()):
+    for word in lst:
         end = start + len(word)
         region.append((start, end))
         start = end
@@ -139,10 +128,8 @@ def to_region(s):
 
 
 def get_correct_number(list_MM, list_jieba):
-    str1 = ' '.join(list_MM)
-    str2 = ' '.join(list_jieba)
-    a = to_region(str1)
-    b = to_region(str2)
+    a = to_region(list_MM)
+    b = to_region(list_jieba)
     res = set(a) & set(b)
     return len(res)
 
@@ -195,6 +182,7 @@ def get_PRF(word_num, word_standard_num, word_correct_num):
     p = word_correct_num / word_num
     r = word_correct_num / word_standard_num
     f = (2 * p * r) / (r + p)
+    print("word_num:{0}\tword_standard_num:{1}\tword_correct_num:{2}\t\n".format(word_num, word_standard_num, word_correct_num))
     print("P:{0:.2%}\tR:{1:.2%}\tF:{2:.2%}\t\n".format(p, r, f))
 
 
