@@ -2,6 +2,8 @@
 # author：xxp time:2022/11/6
 import os
 
+import jieba
+
 import twogram
 import formatcorpus
 import prf
@@ -31,6 +33,7 @@ def disambiguation(path):
     file_name = formatcorpus.originFileName
     word_number = 0  # 分词数
     correct_number = 0  # 正确分词数
+    standard_number = 0  # jieba分词数
     for fName in file_name:
         fmm_file = formatcorpus.F[fName]
         bmm_file = formatcorpus.B[fName]
@@ -43,17 +46,31 @@ def disambiguation(path):
                         ambiguity_sentence = fmm_file[i]
                     else:
                         ambiguity_sentence = bmm_file[i]
+
+                    temp_sentence = ""
+                    for word in ambiguity_sentence:
+                        temp_sentence = temp_sentence + word
+                    new_sentence = temp_sentence
+                    jieba_list = jieba.lcut(new_sentence)
+                    standard_number += len(jieba_list)
+
                     word_number += len(ambiguity_sentence)
-                    correct_number += prf.get_correct_number(ambiguity_sentence)
+                    correct_number += prf.get_correct_number(ambiguity_sentence, jieba_list)
                     write_to_file(path + fName, ambiguity_sentence)
                 else:
+                    temp_sentence = ""
+                    for word in fmm_file[i]:
+                        temp_sentence = temp_sentence + word
+                    new_sentence = temp_sentence
+                    jieba_list = jieba.lcut(new_sentence)
+                    standard_number += len(jieba_list)
+
                     word_number += len(fmm_file[i])
-                    correct_number += prf.get_correct_number(fmm_file[i])
+                    correct_number += prf.get_correct_number(fmm_file[i], jieba_list)
                     write_to_file(path + fName, fmm_file[i])
-    prf.get_prf(word_number, correct_number)
+    prf.get_prf(word_number, correct_number, standard_number)
 
 
 if __name__ == '__main__':
     new_path = "E://Python/自然语言处理/实验三/消歧语料库/"
     disambiguation(new_path)
-    # print(formatcorpus.T)

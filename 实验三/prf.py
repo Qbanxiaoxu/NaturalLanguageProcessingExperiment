@@ -1,13 +1,3 @@
-import formatcorpus
-
-word_standard_num = 0
-for file in formatcorpus.jieba_dict.keys():
-    print(file)
-    word_standard_num += len(formatcorpus.jieba_dict[file])
-    print(formatcorpus.jieba_dict[file])
-jieba_list = formatcorpus.jieba_list
-
-
 def to_region(lst):
     region = []
     start = 0
@@ -18,14 +8,14 @@ def to_region(lst):
     return region
 
 
-def get_correct_number(list_MM):
+def get_correct_number(list_MM, list_jieba):
     a = to_region(list_MM)
-    b = to_region(jieba_list)
+    b = to_region(list_jieba)
     res = set(a) & set(b)
     return len(res)
 
 
-def get_prf(word_num, word_correct_num):
+def get_prf(word_num, word_correct_num, word_standard_num):
     p = word_correct_num / word_num
     r = word_correct_num / word_standard_num
     f = (2 * p * r) / (r + p)

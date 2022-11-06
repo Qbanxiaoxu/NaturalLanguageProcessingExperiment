@@ -1,7 +1,6 @@
 import os
 import re
 
-import jieba
 import zhon.hanzi
 
 trainingCorpusPath = "E://Python/自然语言处理/实验三/训练语料/"
@@ -78,23 +77,7 @@ def format_corpus():
     return trainingFiles, fmmFiles, bmmFiles
 
 
-def get_jieba():
-    jieba_dict = {}
-    jieba_list = []
-    for file_name in originFileName:
-        filesContent = []
-        fContent = re.findall(sentence_structure, read_file(originFilePath + file_name))  # 将.txt文件中句子提取出来，存为列表
-        for f_content in fContent:
-            for word in jieba.lcut(f_content):
-                if word not in zhon.hanzi.stops:
-                    filesContent.append(word)  # 处理列表中的句子
-                    jieba_list.append(word)
-        jieba_dict[file_name] = filesContent
-    return jieba_dict, jieba_list
-
-
 T, F, B = format_corpus()
-jieba_dict, jieba_list = get_jieba()
 
 
 def single_frequency():
