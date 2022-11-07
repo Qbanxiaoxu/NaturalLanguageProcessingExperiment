@@ -77,7 +77,7 @@ def format_corpus():
     return trainingFiles, fmmFiles, bmmFiles
 
 
-T, F, B = format_corpus()
+T, F, B = format_corpus()  # 字典形式存储分词语料和训练语料
 
 
 def single_frequency():

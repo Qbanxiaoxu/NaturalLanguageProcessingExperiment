@@ -4,8 +4,8 @@ import os
 
 import jieba
 
-import twogram
-import formatcorpus
+import two_gram
+import format_corpus
 import prf
 
 
@@ -30,18 +30,18 @@ def write_to_file(fpath, sentence):
 
 
 def disambiguation(path):
-    file_name = formatcorpus.originFileName
+    file_name = format_corpus.originFileName
     word_number = 0  # 分词数
     correct_number = 0  # 正确分词数
     standard_number = 0  # jieba分词数
     for fName in file_name:
-        fmm_file = formatcorpus.F[fName]
-        bmm_file = formatcorpus.B[fName]
+        fmm_file = format_corpus.F[fName]
+        bmm_file = format_corpus.B[fName]
         for i in range(len(bmm_file)):
             if fmm_file[i] and bmm_file[i]:
                 if fmm_file[i] != bmm_file[i]:
-                    fmm_probability = twogram.two_gram_smoothing(fmm_file[i])
-                    bmm_probability = twogram.two_gram_smoothing(bmm_file[i])
+                    fmm_probability = two_gram.two_gram_smoothing(fmm_file[i])
+                    bmm_probability = two_gram.two_gram_smoothing(bmm_file[i])
                     if fmm_probability > bmm_probability:
                         ambiguity_sentence = fmm_file[i]
                     else:

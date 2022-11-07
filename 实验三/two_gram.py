@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # author：xxp time:2022/11/6
-import formatcorpus
+import format_corpus
 
-T, F, B = formatcorpus.T, formatcorpus.F, formatcorpus.B
-single_frequency_dict = formatcorpus.single_frequency()
-double_frequency_dict = formatcorpus.double_frequency()
+T, F, B = format_corpus.T, format_corpus.F, format_corpus.B
+single_frequency_dict = format_corpus.single_frequency()
+double_frequency_dict = format_corpus.double_frequency()
 
 
 def get_single_frequency(word):
