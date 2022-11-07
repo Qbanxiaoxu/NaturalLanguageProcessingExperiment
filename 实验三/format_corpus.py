@@ -12,7 +12,6 @@ extraTrainingCorpusPath = "E://Python/自然语言处理/实验三/训练语料�
 fmmFileName = os.listdir(fmmFilePath)
 bmmFileName = os.listdir(bmmFilePath)
 originFileName = os.listdir(originFilePath)
-extraTrainingFileName = os.listdir(extraTrainingCorpusPath)
 sentence_structure = '[{characters}{radicals}{non_stops}]*{sentence_end}'.format(
     characters=zhon.hanzi.characters, radicals=zhon.hanzi.radicals, non_stops=zhon.hanzi.non_stops + " " + "|",
     sentence_end=zhon.hanzi._sentence_end)  # 定义中文句子结构
@@ -53,9 +52,33 @@ def modify_fb(sentence):  # 处理分词语料中的句子，切分为词，返�
     return s_modify
 
 
+def expand_training_corpus():
+    extraTrainingFileName = os.listdir(extraTrainingCorpusPath)
+    if extraTrainingFileName:
+        for file_name in extraTrainingFileName:
+            file_content = read_file(extraTrainingCorpusPath + file_name)
+            format_file = jieba.lcut(file_content)
+            format_file_content = ""
+            temp_file = []
+            for word in format_file:
+                temp_file.append(word)
+            format_file_content = " ".join(temp_file)
+            print(format_file_content)
+            try:
+                with open(trainingCorpusPath + file_name, 'w', encoding='utf-8') as f:
+                    f.write(format_file_content)
+            except UnicodeEncodeError:
+                with open(trainingCorpusPath + file_name, 'w', encoding='gbk') as f:
+                    f.write(format_file_content)
+            else:
+                print("---------------" + extraTrainingCorpusPath + file_name + "——写入完成" + "---------------")
+    else:
+        return
+
+
 # 处理语料库（训练语料和分词语料），将语料库中的文件和文件内容处理存为字典，返回对应三种字典
 def format_corpus():
-    # expand_training_corpus()
+    expand_training_corpus()
     trainingName = os.listdir(trainingCorpusPath)
     trainingFiles = {}  # 存储训练语料处理后的结果
     fmmFiles = {}  # 存储fmm分词处理后的结果
@@ -114,26 +137,3 @@ def double_frequency():
                         else:
                             double_frequency_dict[double_word] += 1
     return double_frequency_dict
-
-
-def expand_training_corpus():
-    if extraTrainingFileName:
-        for file_name in extraTrainingFileName:
-            file_content = read_file(extraTrainingCorpusPath + file_name)
-            format_file = jieba.lcut(file_content)
-            format_file_content = ""
-            temp_file = []
-            for word in format_file:
-                temp_file.append(word)
-                temp_file.append(" ")
-            format_file_content.join(temp_file)
-            try:
-                with open(extraTrainingCorpusPath + file_name, 'w', encoding='utf-8') as f:
-                    f.write(format_file_content)
-            except UnicodeEncodeError:
-                with open(extraTrainingCorpusPath + file_name, 'w', encoding='gbk') as f:
-                    f.write(format_file_content)
-            else:
-                print("---------------" + extraTrainingCorpusPath + file_name + "——写入完成" + "---------------")
-    else:
-        return
