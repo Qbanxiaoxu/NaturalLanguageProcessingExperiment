@@ -13,11 +13,12 @@ from 实验四.data.fileoperations import FileOperation
 
 
 class CWS:
-    data = Data(T_PATH, O_PATH, EX_T_PATH)
+    # data = Data(T_PATH, O_PATH, EX_T_PATH)
     file_name = os.listdir(O_PATH)  # 训练语料文件名
     result_file = {}
 
-    def __init__(self):
+    def __init__(self, data):
+        self.data = data
         self.corpus_sentence_list = self.data.origin_file_by_sentence
 
     def viterbi(self, sentence):

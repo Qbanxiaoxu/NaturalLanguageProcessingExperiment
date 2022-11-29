@@ -7,10 +7,12 @@ from 实验四.data.data import Data
 
 
 class Hmm:
-    data = Data(T_PATH, O_PATH, EX_T_PATH)
-    tc_file_name = os.listdir(data.trainingCorpusPath)  # 训练语料文件名
+    # data = Data(T_PATH, O_PATH, EX_T_PATH)
+    # tc_file_name = os.listdir(data.trainingCorpusPath)  # 训练语料文件名
 
-    def __init__(self):
+    def __init__(self, data):
+        self.data = data
+        self.tc_file_name = os.listdir(data.trainingCorpusPath)  # 训练语料文件名
         """
         训练语料
         """
