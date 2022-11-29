@@ -19,8 +19,8 @@ class Data:
             characters=zhon.hanzi.characters, radicals=zhon.hanzi.radicals, non_stops=zhon.hanzi.non_stops + " ",
             sentence_end=zhon.hanzi._sentence_end)  # 定义中文句子结构
         self.T_SENTENCE = self.format_corpus_by_sentence()  # 字典形式存储训练语料
-        self.T = self.jieba_T()
-        self.O = self.origin_corpus()
+        self.T, self.T_FILE_STR = self.format_corpus()
+        self.OC, self.origin_file_by_sentence = self.origin_corpus()
 
     def expand_training_corpus(self):
         extraTrainingFileName = os.listdir(self.extraTrainingCorpusPath)
@@ -32,7 +32,7 @@ class Data:
                 for word in format_file:
                     temp_file.append(word)
                 format_file_content = " ".join(temp_file)
-                FileOperation.write_to_file(self.trainingCorpusPath + file_name,format_file_content)
+                FileOperation.write_to_file(self.trainingCorpusPath + file_name, format_file_content)
                 # try:
                 #     with open(self.trainingCorpusPath + file_name, 'w', encoding='utf-8') as f:
                 #         f.write(format_file_content)
@@ -60,16 +60,28 @@ class Data:
             trainingFiles[tName] = file_content
         return trainingFiles
 
-    def jieba_T(self):
+    def format_corpus(self):
+        """
+        以列表形式或字符串形式返回训练语料字符
+        :return:
+        """
         self.expand_training_corpus()
         trainingName = os.listdir(self.trainingCorpusPath)
         trainingFiles = {}
+        training_file_str = {}
         for tName in trainingName:
             trainingFiles[tName] = re.split(" ", FileOperation.read_file_by_line(self.trainingCorpusPath + tName))
-        return trainingFiles
+            training_file_str[tName] = ''.join(trainingFiles[tName])
+        return trainingFiles, training_file_str
 
     def origin_corpus(self):
+        """
+        语料库中的内容不含换行符
+        :return:
+        """
         originFiles = {}
+        originFiles_by_sentence = {}
         for oName in self.originFileName:
             originFiles[oName] = FileOperation.read_file_by_line(self.originFilePath + oName)
-        return originFiles
+            originFiles_by_sentence[oName] = re.findall(zhon.hanzi.sentence, originFiles[oName])
+        return originFiles, originFiles_by_sentence
