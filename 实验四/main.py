@@ -16,7 +16,10 @@ if __name__ == '__main__':
     data = Data(T_PATH, O_PATH, EX_T_PATH)
     # print(data.T["1998人民日报（分词）.txt"])
     # print(data.O["新建文本文档.txt"])
-    h = CWS(data).cws()
+    h = CWS(data)
+    h.cws()
+    print(h.result_file)
+    print(h.jieba_file)
 
     # print(h)
     # dic_content = {'content': 'B'}
