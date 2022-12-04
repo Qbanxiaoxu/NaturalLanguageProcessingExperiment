@@ -33,14 +33,6 @@ class Data:
                     temp_file.append(word)
                 format_file_content = " ".join(temp_file)
                 FileOperation.write_to_file(self.trainingCorpusPath + file_name, format_file_content)
-                # try:
-                #     with open(self.trainingCorpusPath + file_name, 'w', encoding='utf-8') as f:
-                #         f.write(format_file_content)
-                # except UnicodeEncodeError:
-                #     with open(self.trainingCorpusPath + file_name, 'w', encoding='gbk') as f:
-                #         f.write(format_file_content)
-                # else:
-                #     print("---------------" + self.extraTrainingCorpusPath + file_name + "——写入完成" + "---------------")
         else:
             return
 
@@ -70,7 +62,8 @@ class Data:
         trainingFiles = {}
         training_file_str = {}
         for tName in trainingName:
-            trainingFiles[tName] = re.split(" ", FileOperation.read_file_by_line(self.trainingCorpusPath + tName))
+            temp = re.split(" ", FileOperation.read_file_by_line(self.trainingCorpusPath + tName))
+            trainingFiles[tName] = temp
             training_file_str[tName] = ''.join(trainingFiles[tName])
         return trainingFiles, training_file_str
 

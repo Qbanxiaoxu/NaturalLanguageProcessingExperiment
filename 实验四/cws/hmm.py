@@ -27,6 +27,7 @@ class Hmm:
         包含所有训练语料中的字的集合
         """
         self.A = self._A_matrix_by_tuple()
+        # self.A=self._A_matrix_by_dict()
         """
         State transition probability matrix A
         {'B':{'B':xx,'M':xx.'E':xx,'S':xx}}
@@ -201,13 +202,15 @@ class Hmm:
         初始概率矩阵
         :return:
         """
-        pi = []
+        pi = {}
+        # pi = []
         # s=0
         state_num = self._count_state()
         state_sum = self._count_character()
         for state in self.STATE:
             # s+=state_num[state]
-            pi.append(state_num[state] / state_sum)
+            pi[state] = state_num[state] / state_sum
+            # pi.append(state_num[state] / state_sum)
         return pi
 
     def _tc_tag_tuple(self):

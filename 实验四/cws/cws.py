@@ -25,7 +25,7 @@ class CWS:
         self.data = data
         self.corpus_sentence_list = self.data.origin_file_by_sentence
         self.Hmm = Hmm(data)
-        # self.cws()
+        self.cws()
 
     def viterbi(self, sentence):
         A = self.Hmm.A
@@ -54,7 +54,8 @@ class CWS:
                 b_pro = best_node[t - 1][0]
                 for s in state:
                     if w in (dict(B[s])).keys():
-                        result_dict[w][s] = PI[s] * A[b_node][s] * b_pro  # 最佳结点*转移概率*PI
+                        result_dict[w][s] = PI[s] * A[state.index(b_node)][state.index(s)] * b_pro
+                        # result_dict[w][s] = PI[s] * A[b_node][s] * b_pro  # 最佳结点*转移概率*PI
                 dict_temp = dict(result_dict[w])
                 a = max(zip(dict_temp.values(), dict_temp.keys()))
                 best_node.append(list(a))
@@ -74,13 +75,12 @@ class CWS:
             file_list = []
             jieba_list = []
             file_str = ''
-            for list_file in self.corpus_sentence_list[tc_file]:
-                for sentence in list_file:
-                    result_list, result_str = self.viterbi(sentence)
-                    jieba_list = jieba.lcut(sentence)
-                    file_list.append(result_list)
-                    jieba_list.append(jieba_list)
-                    file_str += result_str
+            for sentence in self.corpus_sentence_list[tc_file]:
+                result_list, result_str = self.viterbi(sentence)
+                jieba_temp = jieba.lcut(sentence)
+                file_list.append(result_list)
+                jieba_list.append(jieba_temp)
+                file_str += result_str
             self.result_file[tc_file] = file_list
             self.jieba_file[tc_file] = jieba_list
             # FileOperation.write_to_file(RESULT_PATH + tc_file, file_str)
