@@ -27,16 +27,6 @@ class CWS:
         self.Hmm = Hmm(data)
         # self.cws()
 
-    @staticmethod
-    def transition(A):
-        T = []
-        for x in A.keys():
-            lista = []
-            for y in A[x].keys():
-                lista.append(A[x][y])
-            T.append(lista)
-        return np.array(T)
-
     def viterbi(self, sentence):
         A = self.Hmm.A
         B = self.Hmm.B
