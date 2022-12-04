@@ -38,51 +38,46 @@ class CWS:
         return np.array(T)
 
     def viterbi(self, sentence):
-        """
-        输入sentence，是实现分词
-        :param sentence:
-        :return:HMM分词结果，分词列表和字符串形式，例如：我|爱|我|的|祖国|
-        """
-
-        # A = self.transition(self.Hmm.A)  # A状态转移概率矩阵
-        A = np.array(self.Hmm.A)
+        A = self.Hmm.A
         B = self.Hmm.B
-        # PI = np.array(self.Hmm.PI.values())
-        PI = np.array(self.Hmm.PI)
-        state = self.Hmm.STATE
-        result = []  # 对句子分词后的结果
-        # psi最佳前驱结点，delta最大路径
-        delta = [[0 for _ in range(4)] for _ in range(len(sentence))]
-        psi = [[0 for _ in range(4)] for _ in range(len(sentence))]
-        for t in range(len(sentence)):
-            if t == 0:
-                psi[t][:] = [0, 0, 0, 0]
-                for i in range(0, 4):
-                    delta[t][i] = PI[i] * B[state[i]][sentence[t]]
-
+        PI = self.Hmm.PI
+        state = ['B', 'M', 'E', 'S']
+        result_dict = {}
+        # 初始化结果字典
+        for x in sentence:
+            result_dict[x] = {}
+            for s in state:
+                result_dict[x][s] = 0
+        best_node = []  # 记录最佳结点
+        T = len(sentence)
+        for t in range(0, T):
+            w = sentence[t]
+            if w == sentence[0]:  # 计算初始概率
+                for s in state:
+                    if w in (dict(B[s])).keys():
+                        result_dict[w][s] = PI[s] * B[s][w]
+                dict_temp = dict(result_dict[w])
+                a = max(zip(dict_temp.values(), dict_temp.keys()))
+                best_node.append(list(a))
             else:
-                for i in range(4):
-                    temp = [delta[t - 1][j] * A[j][i] for j in range(A)]
-
-                    delta[t][i] = max(temp) * B[state[i]][sentence[t]]
-
-                    psi[t][i] = temp.index(max(temp))
-        status = []  # 保存最优状态链
-        it = delta[-1].index(max(delta[-1]))
-        status.append(it)
-
-        for t in range(len(delta) - 2, -1, -1):
-            it = psi[t + 1][status[0]]
-            status.insert(0, it)
-
+                b_node = best_node[t - 1][1]
+                b_pro = best_node[t - 1][0]
+                for s in state:
+                    if w in (dict(B[s])).keys():
+                        result_dict[w][s] = PI[s] * A[b_node][s] * b_pro  # 最佳结点*转移概率*PI
+                dict_temp = dict(result_dict[w])
+                a = max(zip(dict_temp.values(), dict_temp.keys()))
+                best_node.append(list(a))
+        temp = []
+        for x in best_node:
+            temp.append(x[1])
         sentence_partition = ''
-        for t in range(len(sentence)):
-            sentence_partition += sentence[t]
-            if (status[t] == '2' or status[t] == '3') and t != len(sentence) - 1:
+        for i in range(0, T):
+            sentence_partition += sentence[i]
+            if temp[i] == 'S' or temp[i] == 'E':
                 sentence_partition += '|'
-
-        result = sentence_partition.split('|')
-        return result, sentence_partition
+        sentence_partition_list = sentence_partition.split("|")[:-1]
+        return sentence_partition_list, sentence_partition
 
     def cws(self):
         for tc_file in self.file_name:
