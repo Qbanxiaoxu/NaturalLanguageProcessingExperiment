@@ -63,6 +63,11 @@ class Data:
         training_file_str = {}
         for tName in trainingName:
             temp = re.split(" ", FileOperation.read_file_by_line(self.trainingCorpusPath + tName))
+            # for word in temp:
+            #     if word in zhon.hanzi.punctuation:
+            #         temp.remove(word)
+            while '' in temp:
+                temp.remove('')
             trainingFiles[tName] = temp
             training_file_str[tName] = ''.join(trainingFiles[tName])
         return trainingFiles, training_file_str
@@ -76,5 +81,9 @@ class Data:
         originFiles_by_sentence = {}
         for oName in self.originFileName:
             originFiles[oName] = FileOperation.read_file_by_line(self.originFilePath + oName)
-            originFiles_by_sentence[oName] = re.findall(zhon.hanzi.sentence, originFiles[oName])
+            temp = re.findall(zhon.hanzi.sentence, originFiles[oName])
+            # file = []
+            # for sentence in temp:
+            #     file.append(re.split(r',|，', sentence[:-1]))
+            originFiles_by_sentence[oName] = temp
         return originFiles, originFiles_by_sentence

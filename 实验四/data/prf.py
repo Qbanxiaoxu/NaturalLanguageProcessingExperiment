@@ -48,7 +48,7 @@ class CalculatePRF:
                 word_standard_num += len(sentence1)
                 #     sentence_num1 += 1
             for i in range(len(self.RESULT[file])):
-                print("sentence_1:{0} \n sentence_2:{1}".format(self.RESULT[file][i], self.JIEBALIST[file][i]))
+                # print("sentence_1:{0} \n sentence_2:{1}".format(self.RESULT[file][i], self.JIEBALIST[file][i]))
                 word_correct_num += self.get_correct_number(self.RESULT[file][i], self.JIEBALIST[file][i])
 
         # print("sentence_num0:{0}  sentence_num1:{1}".format(sentence_num0,sentence_num1))

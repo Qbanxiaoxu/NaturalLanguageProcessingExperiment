@@ -2,6 +2,8 @@
 # author：xxp time:2022/11/27
 import os
 
+import zhon.hanzi
+
 from 实验四.config import T_PATH, O_PATH, EX_T_PATH
 from 实验四.data.data import Data
 
@@ -224,23 +226,57 @@ class Hmm:
         for tc_file in self.tc_file_name:
             mark_tc_list = []
             for content in self.data.T[tc_file]:
+                if content in zhon.hanzi.punctuation:
+                    continue
                 if len(content) == 1:
                     tup_content = (content, 'S')
                     # dic_content= {content: 'S'}
                     mark_tc_list.append(tup_content)
                 if len(content) == 2:
-                    tup_content1 = (content[0], 'B')
-                    mark_tc_list.append(tup_content1)
-                    tup_content2 = (content[1], 'E')
-                    mark_tc_list.append(tup_content2)
-                if len(content) >= 3:
-                    tup_content1 = (content[0], 'B')
-                    mark_tc_list.append(tup_content1)
-                    for character in content[1:-1]:
-                        tup_content = (character, 'M')
+                    if content[0] not in zhon.hanzi.punctuation:
+                        tup_content1 = (content[0], 'B')
+                        mark_tc_list.append(tup_content1)
+                        tup_content2 = (content[1], 'E')
+                        mark_tc_list.append(tup_content2)
+                    else:
+                        tup_content1 = (content[0], 'S')
+                        mark_tc_list.append(tup_content1)
+                        tup_content2 = (content[1], 'S')
+                        mark_tc_list.append(tup_content2)
+                if len(content) == 3:
+                    if content[0] not in zhon.hanzi.punctuation:
+                        tup_content1 = (content[0], 'B')
+                        mark_tc_list.append(tup_content1)
+                        tup_content = (content[1], 'M')
                         mark_tc_list.append(tup_content)
-                    tup_content2 = (content[-1], 'E')
-                    mark_tc_list.append(tup_content2)
+                        tup_content2 = (content[-1], 'E')
+                        mark_tc_list.append(tup_content2)
+                    else:
+                        tup_content1 = (content[0], 'S')
+                        mark_tc_list.append(tup_content1)
+                        tup_content1 = (content[1], 'B')
+                        mark_tc_list.append(tup_content1)
+                        tup_content2 = (content[-1], 'E')
+                        mark_tc_list.append(tup_content2)
+                if len(content) >= 4:
+                    if content[0] not in zhon.hanzi.punctuation:
+                        tup_content1 = (content[0], 'B')
+                        mark_tc_list.append(tup_content1)
+                        for character in content[1:-1]:
+                            tup_content = (character, 'M')
+                            mark_tc_list.append(tup_content)
+                        tup_content2 = (content[-1], 'E')
+                        mark_tc_list.append(tup_content2)
+                    else:
+                        tup_content1 = (content[0], 'S')
+                        mark_tc_list.append(tup_content1)
+                        tup_content1 = (content[1], 'B')
+                        mark_tc_list.append(tup_content1)
+                        for character in content[2:-1]:
+                            tup_content = (character, 'M')
+                            mark_tc_list.append(tup_content)
+                        tup_content2 = (content[-1], 'E')
+                        mark_tc_list.append(tup_content2)
 
             mark_tc[tc_file] = mark_tc_list
         return mark_tc
@@ -256,25 +292,45 @@ class Hmm:
         for tc_file in self.tc_file_name:
             mark_tc_list = []
             for content in self.data.T[tc_file]:
+                if content in zhon.hanzi.punctuation:
+                    continue
                 if len(content) == 1:
                     dic_content = {content: 'S'}
                     mark_tc_list.append(dic_content)
                 if len(content) == 2:
                     # tup_content1 = (content[0], 'B')
-                    dic_content = {content[0]: 'B'}
-                    mark_tc_list.append(dic_content)
-                    # tup_content2 = (content[1], 'E')
-                    dic_content = {content[1]: 'E'}
-                    mark_tc_list.append(dic_content)
+                    if content[0] not in zhon.hanzi.punctuation:
+                        dic_content = {content[0]: 'B'}
+                        mark_tc_list.append(dic_content)
+                        # tup_content2 = (content[1], 'E')
+                        dic_content = {content[1]: 'E'}
+                        mark_tc_list.append(dic_content)
+                    else:
+                        dic_content = {content[0]: 'S'}
+                        mark_tc_list.append(dic_content)
+                        # tup_content2 = (content[1], 'E')
+                        dic_content = {content[1]: 'S'}
+                        mark_tc_list.append(dic_content)
                 if len(content) >= 3:
                     # tup_content1 = (content[0], 'B')
-                    dic_content = {content[0]: 'B'}
-                    mark_tc_list.append(dic_content)
-                    for character in content[1:-1]:
-                        dic_content = {character: 'M'}
+                    if content[0] not in zhon.hanzi.punctuation:
+                        dic_content = {content[0]: 'B'}
                         mark_tc_list.append(dic_content)
-                    dic_content = {content[-1]: 'E'}
-                    mark_tc_list.append(dic_content)
+                        for character in content[1:-1]:
+                            dic_content = {character: 'M'}
+                            mark_tc_list.append(dic_content)
+                        dic_content = {content[-1]: 'E'}
+                        mark_tc_list.append(dic_content)
+                    else:
+                        dic_content = {content[0]: 'S'}
+                        mark_tc_list.append(dic_content)
+                        dic_content = {content[1]: 'B'}
+                        mark_tc_list.append(dic_content)
+                        for character in content[2:-1]:
+                            dic_content = {character: 'M'}
+                            mark_tc_list.append(dic_content)
+                        dic_content = {content[-1]: 'E'}
+                        mark_tc_list.append(dic_content)
 
             mark_tc[tc_file] = mark_tc_list
         return mark_tc

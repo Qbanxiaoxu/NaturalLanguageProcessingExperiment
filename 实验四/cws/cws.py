@@ -8,6 +8,7 @@
 import os
 import jieba
 import numpy as np
+import zhon.hanzi
 
 from 实验四.cws.hmm import Hmm
 from 实验四.data.data import Data
@@ -31,7 +32,7 @@ class CWS:
         A = self.Hmm.A
         B = self.Hmm.B
         PI = self.Hmm.PI
-        state = ['B', 'M', 'E', 'S']
+        state = self.Hmm.STATE
         result_dict = {}
         # 初始化结果字典
         for x in sentence:
@@ -39,6 +40,7 @@ class CWS:
             for s in state:
                 result_dict[x][s] = 0
         best_node = []  # 记录最佳结点
+        former_node = []
         T = len(sentence)
         for t in range(0, T):
             w = sentence[t]
@@ -47,27 +49,49 @@ class CWS:
                     if w in (dict(B[s])).keys():
                         result_dict[w][s] = PI[s] * B[s][w]
                 dict_temp = dict(result_dict[w])
+                former_node.append(dict_temp)  # 保存所有前驱结点
                 a = max(zip(dict_temp.values(), dict_temp.keys()))
-                best_node.append(list(a))
+                best_node.append(list(a)[1])
             else:
-                b_node = best_node[t - 1][1]
-                b_pro = best_node[t - 1][0]
                 for s in state:
-                    if w in (dict(B[s])).keys():
-                        result_dict[w][s] = PI[s] * A[state.index(b_node)][state.index(s)] * b_pro
-                        # result_dict[w][s] = PI[s] * A[b_node][s] * b_pro  # 最佳结点*转移概率*PI
+                    m = 0
+                    for f_node in former_node[t - 1].keys():
+                        f_pro = former_node[t - 1][f_node]
+                        if w in (dict(B[s])).keys():
+                            temp = PI[s] * A[state.index(f_node)][state.index(s)] * f_pro
+                            m = temp if temp > m else m
+                    result_dict[w][s] = m  # 所有概率中的最大值
                 dict_temp = dict(result_dict[w])
+                former_node.append(dict_temp)
                 a = max(zip(dict_temp.values(), dict_temp.keys()))
-                best_node.append(list(a))
-        temp = []
-        for x in best_node:
-            temp.append(x[1])
+                best_node.append(list(a)[1])
         sentence_partition = ''
         for i in range(0, T):
             sentence_partition += sentence[i]
-            if temp[i] == 'S' or temp[i] == 'E':
+            if best_node[i] == 'S' or best_node[i] == 'E':
                 sentence_partition += '|'
-        sentence_partition_list = sentence_partition.split("|")[:-1]
+            # if sentence[i] in zhon.hanzi.punctuation:
+            #     sentence_partition += '|'
+            elif i <= T - 2:
+                if best_node[i] == 'B' and best_node[i+1] == 'B':
+                    sentence_partition += '|'
+                if best_node[i] == 'E' and best_node[i+1] == 'E':
+                    sentence_partition += '|'
+                if best_node[i] == 'M' and best_node[i+1] == 'M':
+                    sentence_partition += '|'
+                if best_node[i] == 'S' and best_node[i+1] == 'S':
+                    sentence_partition += '|'
+                if best_node[i] == 'B' and best_node[i+1] == 'S':
+                    sentence_partition += '|'
+                if best_node[i] == 'M' and best_node[i+1] == 'S':
+                    sentence_partition += '|'
+                if best_node[i] == 'M' and best_node[i+1] == 'B':
+                    sentence_partition += '|'
+        sentence_partition_list = sentence_partition.split("|")
+        while '' in sentence_partition_list:
+            sentence_partition_list.remove('')
+        while sentence_partition_list[-1] == '|':
+            sentence_partition_list = sentence_partition_list[:-1]
         return sentence_partition_list, sentence_partition
 
     def cws(self):
@@ -83,4 +107,4 @@ class CWS:
                 file_str += result_str
             self.result_file[tc_file] = file_list
             self.jieba_file[tc_file] = jieba_list
-            # FileOperation.write_to_file(RESULT_PATH + tc_file, file_str)
+            FileOperation.write_to_file(RESULT_PATH + tc_file, file_str)
