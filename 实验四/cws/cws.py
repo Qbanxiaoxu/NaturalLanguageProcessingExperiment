@@ -58,7 +58,8 @@ class CWS:
                     for f_node in former_node[t - 1].keys():
                         f_pro = former_node[t - 1][f_node]
                         if w in (dict(B[s])).keys():
-                            temp = PI[s] * A[state.index(f_node)][state.index(s)] * f_pro
+                            # temp = PI[s] * A[state.index(f_node)][state.index(s)] * f_pro
+                            temp = B[s][w] * A[state.index(f_node)][state.index(s)] * f_pro
                             m = temp if temp > m else m
                     result_dict[w][s] = m  # 所有概率中的最大值
                 dict_temp = dict(result_dict[w])
