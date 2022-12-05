@@ -226,8 +226,8 @@ class Hmm:
         for tc_file in self.tc_file_name:
             mark_tc_list = []
             for content in self.data.T[tc_file]:
-                if content in zhon.hanzi.punctuation:
-                    continue
+                # if content in zhon.hanzi.punctuation:
+                #     continue
                 if len(content) == 1:
                     tup_content = (content, 'S')
                     # dic_content= {content: 'S'}
